@@ -50,6 +50,7 @@ THIRD_PARTY_APPS = (
 
 LOCAL_APPS = (
     'booking.companies',
+    'booking.courses',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -128,3 +129,7 @@ STATIC_URL = '/static/'
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['fr']
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['FR']
 CITIES_LIGHT_INCLUDE_CITY_TYPES = ['PPL', ]
+
+# Project variables
+
+GROUP_CUSTOMER_LABEL = 'customer'
