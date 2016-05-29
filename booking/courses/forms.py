@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django import forms
 from django.utils.translation import ugettext as _
 from django.utils import timezone
@@ -24,15 +26,6 @@ class CreateJourneyForm(forms.ModelForm):
         dt_field = self.fields.pop('departure_dt')
         self.fields['departure_dt'] = dt_field
 
-    def clean(self):
-        cleaned_data = super(CreateJourneyForm, self).clean()
-
-        departure_city = cleaned_data.get('departure_city', None)
-        if departure_city is None:
-            raise forms.ValidationError(_("Field 'departure_city' is required"))
-
-        return cleaned_data
-
     def clean_car(self):
         car = self.cleaned_data['car']
         if car.is_reserved is True:
@@ -40,7 +33,7 @@ class CreateJourneyForm(forms.ModelForm):
 
         departure_city = self.cleaned_data['departure_city']
         if car.location != departure_city:
-            raise forms.ValidationError(_('Car selected not found in {}'.format(departure_city.country)))
+            raise forms.ValidationError(_('Car selected not found in {}'.format(departure_city)))
         return car
 
     def clean_departure_dt(self):
@@ -72,4 +65,17 @@ class CreateJourneyForm(forms.ModelForm):
     def save(self, commit=True):
         obj = super(CreateJourneyForm, self).save(commit=False)
         return obj
+
+
+class AdminJourneyForm(CreateJourneyForm):
+
+    def __init__(self, *args, **kwargs):
+        super(AdminJourneyForm, self).__init__(*args, **kwargs)
+        self.fields['car'].queryset = Cars.objects.filter(
+            is_active=True,
+        )
+
+    class Meta:
+        model = Journey
+        fields = '__all__'
 

@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext as _
 
 from .models import Journey
+from .forms import AdminJourneyForm
 
 # Register your models here.
 
@@ -20,5 +21,10 @@ class JourneyAdmin(admin.ModelAdmin):
             'fields': ('car',)
         }),
     )
+
+    def get_form(self, request, obj=None, **kwargs):
+        if obj is None:
+            kwargs['form'] = AdminJourneyForm
+        return super(JourneyAdmin, self).get_form(request, obj, **kwargs)
 
 admin.site.register(Journey, JourneyAdmin)

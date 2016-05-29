@@ -118,25 +118,6 @@ class Journey(CommonFields):
         car.save()
 
     def clean(self):
-        if self.departure_city.country != self.country:
-            raise ValidationError(
-                {
-                    'departure': _('Departure location not in country {}'.format(self.country))
-                }
-            )
-
-        if self.arrival_city.country != self.country:
-            raise ValidationError(
-                {
-                    'departure': _('Arrival location not in country {}'.format(self.country))
-                }
-            )
-
-        if self.car.location != self.departure_city:
-            raise ValidationError(
-                {'car': _('Car not available for departure from {}'.format(self.departure_city))}
-            )
-
         if self.car_tracker.has_changed('car') is True:
             if self.car.is_reserved is True:
                 raise ValidationError(
