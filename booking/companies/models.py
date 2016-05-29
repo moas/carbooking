@@ -67,9 +67,10 @@ class Cars(CommonFields):
                 ))}
             )
 
-        if self.company.cities and self.company.cities.filter(id=self.location.id).exists() is False:
-            raise ValidationError(
-                {'location': _('Company not cover {}'.format(self.location))}
-            )
+        if self.company.cities.exists():
+            if self.location.id in self.company.cities.values_list('id', flat=True) is False:
+                raise ValidationError(
+                    {'location': _('Company not cover {}'.format(self.location))}
+                )
 
 

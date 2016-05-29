@@ -12,7 +12,7 @@ class CompaniesAdmin(admin.ModelAdmin):
 
 
 class CarsAdmin(admin.ModelAdmin):
-    list_display = ('company', 'location', 'description')
+    list_display = ('company', 'location', 'description', 'is_active', 'is_reserved')
 
 admin.site.register(Companies, CompaniesAdmin)
 admin.site.register(Cars, CarsAdmin)

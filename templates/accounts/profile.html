@@ -1,0 +1,13 @@
+{% load i18n %}
+
+<p>
+    {% trans "Welcome" %} <b>{{ request.user.get_full_name }}</b>
+</p>
+
+<p>
+    <a href="{% url 'courses:list-courses' %}">{% trans "See your reservation(s) list" %}</a> / <a href="{% url 'courses:add-course' %}">{% trans "Create new reservation" %}</a>
+</p>
+
+<p>
+    <a href="{% url 'accounts:account-logout' %}">{% trans "Logout" %}</a>
+</p>

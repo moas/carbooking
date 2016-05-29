@@ -1,0 +1,14 @@
+{% load i18n %}
+
+<form method="post" action=".">
+    {{ form.as_p }}
+    <div style="display:none">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    </div>
+     <input type="submit" value="{% trans 'Connexion' %}">
+</form>
+<p>
+    <a href="{% url 'accounts:account-register' %}">
+        {% trans "Create an account" %}
+    </a>
+</p>

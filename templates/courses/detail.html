@@ -1,0 +1,12 @@
+{% load i18n %}
+
+{% trans 'Customer' %}: {{ object.customer.get_full_name }} <br>
+{% trans 'Departure' %}: {{ object.to }} <br>
+{% trans 'Arrival' %}: {{ object.destination }} <br>
+{% trans 'Time' %}: {{ object.departure_dt }} <br>
+
+<br><br>
+<a href="{% url 'courses:list-courses' %}">
+    {% trans 'Back' %}
+</a>
+

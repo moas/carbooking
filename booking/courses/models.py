@@ -19,29 +19,6 @@ from ..utils.common import CommonFields
 
 
 @python_2_unicode_compatible
-class LocationPoint(models.Model):
-    city = models.ForeignKey(
-        City,
-        on_delete=models.CASCADE,
-        verbose_name=_('City')
-    )
-    address = models.CharField(
-        _('Address'),
-        max_length=150,
-    )
-
-    def __str__(self):
-        return "{} ({})".format(
-            self.address,
-            self.city
-        )
-
-    class Meta:
-        verbose_name = _('Location')
-        verbose_name_plural = _('List of locations')
-
-
-@python_2_unicode_compatible
 class Journey(CommonFields):
     customer = models.ForeignKey(
         User,
@@ -57,32 +34,40 @@ class Journey(CommonFields):
         on_delete=models.CASCADE,
         verbose_name=_("Country")
     )
-    departure = models.ForeignKey(
-        LocationPoint,
-        verbose_name=_('Departure'),
+    departure_city = models.ForeignKey(
+        City,
+        verbose_name=_('Departure city'),
         related_name='departure_point',
-        help_text=_('Departure must be related to country selected')
+        help_text=_('Departure must be related to country selected'),
+    )
+    departure_address = models.CharField(
+        _("Departure address"),
+        max_length=150
     )
     departure_dt = models.DateTimeField(
         _('Start time'),
         default=datetime.datetime.now,
     )
-    arrival = models.ForeignKey(
-        LocationPoint,
-        verbose_name=_('Arrival'),
+    arrival_city = models.ForeignKey(
+        City,
+        verbose_name=_('Arrival city'),
         related_name='arrival_point',
         help_text=_('Arrival must be related to country selected')
     )
-    arrival_dt = models.DateTimeField(
-        _('End time'),
+    arrival_address = models.CharField(
+        _('Arrival address'),
+        max_length=150,
     )
     car = models.ForeignKey(
         Cars,
-        limit_choices_to={'is_active': True},
+        limit_choices_to={'is_active': True, },
         verbose_name=_('Car'),
     )
+    is_active = models.BooleanField(
+        default=True
+    )
 
-    car_tracker = FieldTracker()
+    car_tracker = FieldTracker(['car'])
 
     def __str__(self):
         return "Journey {}: {}".format(
@@ -90,13 +75,29 @@ class Journey(CommonFields):
             self.customer.get_full_name(),
         )
 
+    def customer_full_name(self):
+        return self.customer.get_full_name()
+
+    def to(self):
+        return '{} ({})'.format(
+            self.departure_city,
+            self.departure_address,
+        )
+
+    def destination(self):
+        return '{} ({})'.format(
+            self.arrival_city,
+            self.arrival_address,
+        )
+    destination.short_description = 'from'
+
     class Meta:
         verbose_name = _("journey")
         verbose_name_plural = _("List of journey")
 
     def get_absolute_url(self):
         from django.core.urlresolvers import reverse
-        return
+        return reverse('courses:detail-course', self.id)
 
     @classmethod
     def reserved_flag(cls, sender, instance, created, **kwargs):
@@ -117,28 +118,23 @@ class Journey(CommonFields):
         car.save()
 
     def clean(self):
-        if self.departure.city.country != self.country:
+        if self.departure_city.country != self.country:
             raise ValidationError(
                 {
                     'departure': _('Departure location not in country {}'.format(self.country))
                 }
             )
 
-        if self.arrival.city.country != self.country:
+        if self.arrival_city.country != self.country:
             raise ValidationError(
                 {
                     'departure': _('Arrival location not in country {}'.format(self.country))
                 }
             )
 
-        if self.departure_dt >= self.arrival_dt:
+        if self.car.location != self.departure_city:
             raise ValidationError(
-                _('Date and time configuration are incoherent')
-            )
-
-        if self.car.location != self.departure.city:
-            raise ValidationError(
-                {'car': _('Car not available for departure from {}'.format(self.departure.city))}
+                {'car': _('Car not available for departure from {}'.format(self.departure_city))}
             )
 
         if self.car_tracker.has_changed('car') is True:

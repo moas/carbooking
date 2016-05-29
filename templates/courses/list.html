@@ -1,0 +1,31 @@
+{% load i18n %}
+
+{% if object_list %}
+    <table>
+        {% for object in object_list %}
+            <tr>
+                <td>{{ object.customer_full_name }}</td>
+                <td>&nbsp; | &nbsp;</td>
+                <td>{{ object.to }}</td>
+                <td>&nbsp; | &nbsp;</td>
+                <td>{{ object.destination }}</td>
+                <td>&nbsp; | &nbsp;</td>
+                <td>
+                    <a href="{% url 'courses:detail-course' object.id %}">{% trans 'See' %}</a>
+                </td>
+                <td>&nbsp; | &nbsp;</td>
+                <td>
+                    <a href="{% url 'courses:delete-course' object.id %}">{% trans 'Delete' %}</a>
+                </td>
+
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    {% trans "No journey registered" %}
+{% endif %}
+
+<br><br>
+<a href="{% url 'courses:add-course' %}">
+    {% trans 'Create a journey' %}
+</a>
