@@ -11,12 +11,6 @@ from ..utils.common import CommonFields
 # Create your models here.
 
 
-class CarsReserved(models.Manager):
-
-    def get_queryset(self):
-        return super(CarsReserved, self).get_queryset().filter(is_reserved=True)
-
-
 @python_2_unicode_compatible
 class Companies(CommonFields):
     name = models.CharField(max_length=50)
@@ -44,7 +38,6 @@ class Cars(CommonFields):
     is_reserved = models.BooleanField(default=False)
 
     objects = models.Manager()
-    reserved = CarsReserved()
 
     def __str__(self):
         return "{} ({})".format(self.description, self.company)
