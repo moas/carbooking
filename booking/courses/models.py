@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 from django.db.models import signals
@@ -46,7 +47,7 @@ class Journey(CommonFields):
     )
     departure_dt = models.DateTimeField(
         _('Start time'),
-        default=datetime.datetime.now,
+        default=timezone.now() + timezone.timedelta(minutes=15),
     )
     arrival_city = models.ForeignKey(
         City,
